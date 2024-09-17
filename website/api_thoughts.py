@@ -10,7 +10,7 @@ TODO
 4. get a users posts
 """
 
+
 @api_thoughts.route('/')
 def home():
     return {'message': 'Hello, World!'}
-
