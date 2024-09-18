@@ -1,16 +1,35 @@
-from flask import Blueprint
+from datetime import datetime
+from flask import Blueprint, request, jsonify
+from .extentions import db
+from .models import Thought
 
 api_thoughts = Blueprint('api_thoughts', __name__)
 
-"""
-TODO
-1. get latest posts
-2. get top rated posts
-3. get most liked posts
-4. get a users posts
-"""
+
+@api_thoughts.route('/create', methods=['PUT'])
+def create():
+    content = request.headers['content']
+
+    thought = Thought(content=content, date=datetime.now())
+    db.session.add(thought)
+    db.session.commit()
+
+    return jsonify({'message': 'Thought created successfully'}), 201
 
 
-@api_thoughts.route('/')
-def home():
-    return {'message': 'Hello, World!'}
+@api_thoughts.route('/get')
+def get():
+
+    thoughts = Thought.query.order_by(Thought.date.desc()).all()
+
+    response = []
+
+    for i in thoughts:
+        response.append({
+            'id': i.id,
+            'content': i.content,
+            'date': i.date,
+            'user_id': i.user_id
+        })
+
+    return response

@@ -1,7 +1,7 @@
 from flask import Flask
 from os import path, getenv
 from dotenv import load_dotenv
-from .extentions import db, bcrypt
+from .extentions import db, bcrypt, cors
 
 load_dotenv('/.env')
 
@@ -14,6 +14,7 @@ def create_app():
 
     db.init_app(app)
     bcrypt.init_app(app)
+    cors.init_app(app)
 
     from . import models
 
