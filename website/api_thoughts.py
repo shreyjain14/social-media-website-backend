@@ -6,7 +6,7 @@ from .models import Thought
 api_thoughts = Blueprint('api_thoughts', __name__)
 
 
-@api_thoughts.route('/create', methods=['PUT'])
+@api_thoughts.route('/create', methods=['POST'])
 def create():
     content = request.headers['content']
 

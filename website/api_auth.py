@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     current_user,
     get_jwt_identity,
 )
-from models import User, TokenBlocklist
+from .models import User, TokenBlocklist
 
 api_auth = Blueprint("api_auth", __name__)
 
