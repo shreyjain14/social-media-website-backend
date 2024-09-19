@@ -1,4 +1,3 @@
-from flask_login import UserMixin
 from .extentions import db
 from uuid import uuid4
 from datetime import datetime
@@ -11,8 +10,12 @@ class Thought(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
-class User(db.Model, UserMixin):
+
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
@@ -67,10 +70,13 @@ class Following(db.Model):
         self.username = username
         self.following = '-1'
         self.followers = '-1'
-        self.uploads = '-1'
         self.followers_count = 0
         self.following_count = 0
         self.uploads_count = 0
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
     def add_following(self, username):
         self.following += "/" + str(username)
@@ -107,11 +113,6 @@ class Following(db.Model):
     def get_followers(self):
         return self.followers.split("/")[1::]
 
-    def add_image(self, name):
-        self.uploads += "/" + str(name)
+    def add_thought(self):
         self.uploads_count += 1
-        db.session.commit()
-
-    def get_images(self):
-        return self.uploads.split("/")[1::]
  

@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     current_user,
     get_jwt_identity,
 )
-from .models import User, TokenBlocklist
+from .models import User, TokenBlocklist, Following
 
 api_auth = Blueprint("api_auth", __name__)
 
@@ -22,10 +22,11 @@ def register_user():
         return jsonify({"error": "User already exists"}), 409
 
     new_user = User(username=data.get("username"), email=data.get("email"))
-
     new_user.set_password(password=data.get("password"))
-
     new_user.save()
+
+    new_user_following = Following(username=data.get("username"))
+    new_user_following.save()
 
     return jsonify({"message": "User created"}), 201
 

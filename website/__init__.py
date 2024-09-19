@@ -30,9 +30,11 @@ def create_app():
     # registering blueprints
     from .api_auth import api_auth
     from .api_thoughts import api_thoughts
+    from .api_social import api_social
 
     app.register_blueprint(api_auth, url_prefix='/auth/')
     app.register_blueprint(api_thoughts, url_prefix='/thoughts/')
+    app.register_blueprint(api_social, url_prefix='/social/')
 
     # load user
     @jwt.user_lookup_loader

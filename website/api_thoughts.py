@@ -1,7 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from .extentions import db
-from .models import Thought
+from .models import Thought, Following
 from flask_jwt_extended import jwt_required, current_user
 
 api_thoughts = Blueprint('api_thoughts', __name__)
@@ -16,8 +15,11 @@ def create():
         thought = Thought(content=content, date=datetime.now())
     else:
         thought = Thought(content=content, date=datetime.now(), user_id=current_user.username)
-    db.session.add(thought)
-    db.session.commit()
+        following = Following.query.filter_by(username=current_user.username).first()
+        following.add_thought()
+        following.save()
+
+    thought.save()
 
     return jsonify({'message': 'Thought created successfully'}), 201
 
@@ -37,4 +39,4 @@ def get():
             'user_id': i.user_id
         })
 
-    return response
+    return jsonify(response), 200
