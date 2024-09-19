@@ -40,3 +40,21 @@ def get():
         })
 
     return jsonify(response), 200
+
+
+@api_thoughts.route('/get/<username>')
+def get_user_thoughts(username):
+
+    thoughts = Thought.query.filter_by(user_id=username).order_by(Thought.date.desc()).all()
+
+    response = []
+
+    for i in thoughts:
+        response.append({
+            'id': i.id,
+            'content': i.content,
+            'date': i.date,
+            'user_id': i.user_id
+        })
+
+    return jsonify(response), 200
