@@ -17,7 +17,7 @@ def create_app():
 
     # extensions initialization
     db.init_app(app)
-    cors.init_app(app)
+    cors.init_app(app, origins=['http://localhost:3000'])
     jwt.init_app(app)
 
     # creating db if not exists

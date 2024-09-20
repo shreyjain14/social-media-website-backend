@@ -8,20 +8,34 @@ api_thoughts = Blueprint('api_thoughts', __name__)
 
 @api_thoughts.route('/create', methods=['POST'])
 @jwt_required()
-def create():
-    content = request.headers['content']
+def create_thought():
+    data = request.get_json()
+    content = data.get('content')
+    anonymous = data.get('anonymous', False)
 
-    if request.headers['anonymous'] == 'true':
+    if not content:
+        return jsonify({'message': 'Content is required'}), 400
+
+    if anonymous:
         thought = Thought(content=content, date=datetime.now())
     else:
         thought = Thought(content=content, date=datetime.now(), user_id=current_user.username)
-        following = Following.query.filter_by(username=current_user.username).first()
+
+    following = Following.query.filter_by(username=current_user.username).first()
+    if following:
         following.add_thought()
         following.save()
 
     thought.save()
 
-    return jsonify({'message': 'Thought created successfully'}), 201
+    created_post = {
+        'id': thought.id,
+        'user_id': 'Anonymous' if anonymous else current_user.username,
+        'content': content,
+        'date': thought.date.isoformat()
+    }
+
+    return jsonify(created_post), 201
 
 
 @api_thoughts.route('/get')
