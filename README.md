@@ -3,7 +3,7 @@
 
 ## Auth Endpoints:
 
-- `auth/login`
+- POST `auth/login`
   
 Body input:  
 ```
@@ -13,7 +13,7 @@ Body input:
 }
 ```
   
-- `auth/register`
+- POST `auth/register`
   
 Body input: 
 ```
@@ -24,15 +24,19 @@ Body input:
 }
 ```
 
-- `auth/whoami`
+- GET `auth/whoami`
   
 Bearer Token Required.
 
-- `auth/logout`
+- GET `auth/refresh`
+
+Bearer Token Required.
+
+- GET `auth/logout`
 
 ## Thought Endpoints
 
-- `thought/create`
+- POST `thought/create`
   
 Bearer Token Required.
 
@@ -43,13 +47,13 @@ Body Input:
   "anonymous": "true"
 }
 ```
-- `thought/get`
+- GET `thought/get`
 
-- `thought/get/<username>`
+- GET `thought/get/<username>`
 
 ## Social Endpoints
 
-- `social/follow`
+- POST `social/follow`
   
 Bearer Token Required.
 
@@ -59,7 +63,7 @@ Body Input:
   "username": username being followed
 }
 ```
-- `social/unfollow`
+- POST `social/unfollow`
   
 Bearer Token Required.
 
