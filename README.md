@@ -4,6 +4,7 @@
 ## Auth Endpoints:
 
 - `auth/login`
+  
 Body input:  
 ```
 {
@@ -13,6 +14,7 @@ Body input:
 ```
   
 - `auth/register`
+  
 Body input: 
 ```
 {
@@ -23,6 +25,7 @@ Body input:
 ```
 
 - `auth/whoami`
+  
 Bearer Token Required.
 
 - `auth/logout`
@@ -30,7 +33,9 @@ Bearer Token Required.
 ## Thought Endpoints
 
 - `thought/create`
+  
 Bearer Token Required.
+
 Body Input: 
 ```
 {
@@ -42,10 +47,12 @@ Body Input:
 
 - `thought/get/<username>`
 
-## Social
+## Social Endpoints
 
 - `social/follow`
+  
 Bearer Token Required.
+
 Body Input:
 ```
 {
@@ -53,7 +60,9 @@ Body Input:
 }
 ```
 - `social/unfollow`
+  
 Bearer Token Required.
+
 Body Input:
 ```
 {
