@@ -17,7 +17,16 @@ def create_app():
 
     # extensions initialization
     db.init_app(app)
-    cors.init_app(app, origins=['http://localhost:3000'])
+    cors.init_app(app, resources={r"/*": {
+        "origins": [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "https://thoughts.toystackapp.net"
+        ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True  # If you're using cookies or authentication
+    }})
     jwt.init_app(app)
 
     # creating db if not exists

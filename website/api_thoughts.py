@@ -40,8 +40,10 @@ def create_thought():
 
 @api_thoughts.route('/get')
 def get():
+    data = request.get_json()
+    page = data.get('page', 1)
 
-    thoughts = Thought.query.order_by(Thought.date.desc()).all()
+    thoughts = Thought.query.order_by(Thought.date.desc()).paginate(page=page, per_page=10, error_out=False).items
 
     response = []
 
@@ -50,7 +52,34 @@ def get():
             'id': i.id,
             'content': i.content,
             'date': i.date,
-            'user_id': i.user_id
+            'user_id': i.user_id,
+            'likes': i.like,
+            'liked': False
+        })
+
+    return jsonify(response), 200
+
+
+@api_thoughts.route('/get-with-login')
+@jwt_required()
+def get_with_login():
+    data = request.get_json()
+    page = data.get('page', 1)
+
+    thoughts = Thought.query.order_by(Thought.date.desc()).paginate(page=page, per_page=10, error_out=False).items
+
+    response = []
+
+    current_user_likes = Following.query.filter_by(username=current_user.username).first().get_likes()
+
+    for i in thoughts:
+        response.append({
+            'id': i.id,
+            'content': i.content,
+            'date': i.date,
+            'user_id': i.user_id,
+            'likes': i.like,
+            'liked': True if current_user and str(i.id) in current_user_likes else False
         })
 
     return jsonify(response), 200
@@ -72,3 +101,29 @@ def get_user_thoughts(username):
         })
 
     return jsonify(response), 200
+
+
+@api_thoughts.post('/like')
+@jwt_required()
+def like_thought():
+    data = request.get_json()
+    thought_id = data.get('thought_id')
+
+    thought = Thought.query.filter_by(id=thought_id).first()
+
+    if not thought:
+        return jsonify({'message': 'Thought not found'}), 404
+
+    following = Following.query.filter_by(username=current_user.username).first()
+
+    if str(thought_id) in following.get_likes():
+        following.remove_like(thought_id)
+        thought.like -= 1
+    else:
+        following.add_like(thought_id)
+        thought.like += 1
+
+    following.save()
+    thought.save()
+
+    return jsonify({'message': 'Success'}), 200

@@ -9,6 +9,7 @@ class Thought(db.Model):
     content = db.Column(db.String(1000), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    like = db.Column(db.Integer, default=0)
 
     def save(self):
         db.session.add(self)
@@ -20,6 +21,7 @@ class User(db.Model):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
+    admin = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -62,6 +64,7 @@ class Following(db.Model):
     following = db.Column(db.String(100000))
     uploads = db.Column(db.String(100000))
     followers = db.Column(db.String(100000))
+    likes = db.Column(db.String(100000))
     following_count = db.Column(db.Integer)
     uploads_count = db.Column(db.Integer)
     followers_count = db.Column(db.Integer)
@@ -70,6 +73,7 @@ class Following(db.Model):
         self.username = username
         self.following = '-1'
         self.followers = '-1'
+        self.likes = '-1'
         self.followers_count = 0
         self.following_count = 0
         self.uploads_count = 0
@@ -77,6 +81,25 @@ class Following(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def add_like(self, thought_id):
+        self.likes += "/" + str(thought_id)
+        db.session.commit()
+        thought = Thought.query.filter_by(id=thought_id).first()
+        thought.like += 1
+        thought.save()
+
+    def remove_like(self, thought_id):
+        like_list = self.likes.split("/")
+        like_list.remove(str(thought_id))
+        self.likes = "/".join(like_list)
+        db.session.commit()
+        thought = Thought.query.filter_by(id=thought_id).first()
+        thought.like -= 1
+        thought.save()
+
+    def get_likes(self):
+        return self.likes.split("/")[1::]
 
     def add_following(self, username):
         self.following += "/" + str(username)
