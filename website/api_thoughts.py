@@ -40,8 +40,7 @@ def create_thought():
 
 @api_thoughts.route('/get')
 def get():
-    data = request.get_json()
-    page = data.get('page', 1)
+    page = request.args.get('page', 1, type=int)
 
     thoughts = Thought.query.order_by(Thought.date.desc()).paginate(page=page, per_page=10, error_out=False).items
 
@@ -63,8 +62,7 @@ def get():
 @api_thoughts.route('/get-with-login')
 @jwt_required()
 def get_with_login():
-    data = request.get_json()
-    page = data.get('page', 1)
+    page = request.args.get('page', 1, type=int)
 
     thoughts = Thought.query.order_by(Thought.date.desc()).paginate(page=page, per_page=10, error_out=False).items
 
